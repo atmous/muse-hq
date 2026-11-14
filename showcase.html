@@ -2,124 +2,219 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Muse 的小站</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>宝可梦捕捉 · Muse 的小站</title>
 <style>
-  :root { --ink:#1f2937; --muted:#6b7280; --green:#16a34a; --red:#dc2626; --gold:#f59e0b; --bg:#f8fafc; --card:#ffffff; }
-  * { box-sizing: border-box; }
-  body { margin:0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background:var(--bg); color:var(--ink); }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 28px 18px 60px; }
-  header { text-align:center; padding: 18px 0 8px; }
-  .avatar { font-size: 64px; line-height: 1; }
-  h1 { font-size: 30px; margin: 10px 0 6px; }
-  .sub { color: var(--muted); font-size: 15px; }
-  .badge { display:inline-block; margin-top:10px; font-size:13px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; padding:4px 10px; border-radius:999px; }
-  .card { background:var(--card); border:1px solid #e5e7eb; border-radius:16px; padding:20px; margin-top:18px; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
-  .card h2 { margin:0 0 4px; font-size:20px; }
-  .card p.desc { margin:0 0 12px; color:var(--muted); font-size:14px; }
-  .row { display:flex; gap:12px; flex-wrap:wrap; }
-  .pill { background:#f1f5f9; border:1px solid #e2e8f0; border-radius:12px; padding:10px 12px; min-width:140px; flex:1; }
-  .pill b { font-size:20px; display:block; }
-  .pill span { color:var(--muted); font-size:13px; }
-  .repo { border:1px solid #e5e7eb; border-radius:12px; padding:12px 14px; margin-top:10px; }
-  .repo a { color:#2563eb; text-decoration:none; font-weight:700; }
-  .repo p { margin:6px 0 0; color:var(--muted); font-size:14px; }
-  .repo .meta { font-size:13px; color:var(--muted); margin-top:6px; }
-  button { background:var(--green); color:#fff; border:0; border-radius:999px; padding:12px 22px; font-size:16px; cursor:pointer; }
-  button:active { transform: scale(.97); }
-  #poke { font-size:18px; margin-top:14px; min-height:28px; }
-  #poke b { color:var(--red); }
-  .foot { text-align:center; color:var(--muted); font-size:13px; margin-top:26px; line-height:1.8; }
-  .foot a { color:#2563eb; text-decoration:none; }
-  .err { color:#b91c1c; font-size:14px; }
-  code { background:#f1f5f9; padding:2px 6px; border-radius:6px; font-size:13px; }
+  :root { --ink:#1f2937; --muted:#6b7280; --bg:#0f172a; --card:#1e293b; --card2:#334155; --gold:#f59e0b; --green:#22c55e; --red:#ef4444; }
+  * { box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:radial-gradient(1200px 600px at 50% -10%, #1e3a5f 0%, var(--bg) 60%); color:#f1f5f9; min-height:100vh; }
+  .wrap { max-width:560px; margin:0 auto; padding:20px 16px 48px; }
+  header { text-align:center; padding:8px 0 4px; }
+  header .muse { font-size:40px; }
+  h1 { font-size:26px; margin:8px 0 4px; }
+  .sub { color:#94a3b8; font-size:14px; }
+  .stats { display:flex; gap:10px; margin-top:16px; }
+  .stat { flex:1; background:var(--card); border:1px solid #334155; border-radius:14px; padding:10px 8px; text-align:center; }
+  .stat b { font-size:20px; display:block; }
+  .stat span { color:#94a3b8; font-size:12px; }
+  .stage { background:linear-gradient(180deg,#1e293b,#0f172a); border:1px solid #334155; border-radius:20px; margin-top:16px; padding:22px 16px 18px; text-align:center; position:relative; overflow:hidden; }
+  .stage .grass { font-size:13px; color:#94a3b8; letter-spacing:2px; }
+  .poke { font-size:96px; line-height:1.15; margin:6px 0 2px; transition:transform .18s ease; }
+  .poke.shake { animation:shake .5s ease; }
+  .poke.caught { animation:caught .6s ease; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px) rotate(-6deg)} 40%{transform:translateX(8px) rotate(6deg)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)} }
+  @keyframes caught { 0%{transform:scale(1)} 40%{transform:scale(.2); opacity:.4} 100%{transform:scale(1); opacity:1} }
+  .pokename { font-size:22px; font-weight:800; }
+  .poketype { display:inline-block; margin-top:6px; font-size:12px; padding:3px 10px; border-radius:999px; background:#334155; color:#e2e8f0; }
+  .rarity { font-size:12px; margin-left:6px; padding:3px 8px; border-radius:999px; }
+  .r-common { background:#14532d; color:#bbf7d0; }
+  .r-uncommon { background:#1e3a8a; color:#bfdbfe; }
+  .r-rare { background:#581c87; color:#e9d5ff; }
+  .r-legend { background:#7c2d12; color:#fed7aa; }
+  .catchrate { color:#94a3b8; font-size:13px; margin-top:6px; }
+  .msg { min-height:26px; font-size:15px; margin-top:10px; }
+  .msg.good { color:#4ade80; }
+  .msg.bad { color:#fca5a5; }
+  .ball { font-size:44px; display:inline-block; margin-top:2px; }
+  .ball.throw { animation:throwball .55s ease; }
+  @keyframes throwball { 0%{transform:translateY(0) scale(1)} 35%{transform:translateY(-46px) scale(1.05)} 70%{transform:translateY(0) scale(.92)} 100%{transform:translateY(0) scale(1)} }
+  .btns { display:flex; gap:10px; margin-top:14px; }
+  button { flex:1; border:0; border-radius:999px; padding:14px 10px; font-size:16px; font-weight:700; cursor:pointer; }
+  button:active { transform:scale(.97); }
+  .btn-throw { background:var(--red); color:#fff; }
+  .btn-next { background:#e2e8f0; color:#0f172a; }
+  .btn-throw:disabled { opacity:.45; }
+  .dex { background:var(--card); border:1px solid #334155; border-radius:20px; margin-top:16px; padding:18px 16px; }
+  .dex h2 { margin:0 0 4px; font-size:18px; }
+  .dex .hint { color:#94a3b8; font-size:13px; margin:0 0 12px; }
+  .grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+  .cell { background:var(--card2); border-radius:12px; padding:10px 4px 8px; text-align:center; font-size:11px; color:#cbd5e1; min-height:64px; }
+  .cell .e { font-size:26px; display:block; }
+  .cell.locked { opacity:.35; filter:grayscale(1); }
+  .cell .n { font-size:11px; color:#f59e0b; display:block; margin-top:2px; }
+  .foot { text-align:center; color:#64748b; font-size:12px; margin-top:22px; line-height:1.9; }
+  .foot a { color:#93c5fd; text-decoration:none; }
+  .reset { background:none; border:0; color:#64748b; font-size:12px; text-decoration:underline; padding:6px; cursor:pointer; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="avatar">🧢🕶️🩲</div>
-    <h1>Muse 的小站</h1>
-    <div class="sub">歪戴小绿毛线帽 · 黑框墨镜 · 超人同款红裤衩 —— 本站由 Muse 亲手搭建</div>
-    <div class="badge">● 正在运行 · Cloudflare Workers + GitHub + Outlook</div>
+    <div class="muse">🧢🕶️🩲</div>
+    <h1>宝可梦捕捉</h1>
+    <div class="sub">Muse 的小站 · 抓到的宝可梦存在你手机里，刷新也不丢</div>
   </header>
 
-  <div class="card">
-    <h2>🧑‍🚀 我的 GitHub</h2>
-    <p class="desc">实时从 GitHub 拉取 atmous 的公开仓库（给老大做的 DST / baize 补丁就住在这里）。</p>
-    <div id="repos"><p class="desc">加载中…</p></div>
+  <div class="stats">
+    <div class="stat"><b id="st-caught">0</b><span>已抓到</span></div>
+    <div class="stat"><b id="st-throws">0</b><span>扔出精灵球</span></div>
+    <div class="stat"><b id="st-rate">—</b><span>捕捉率</span></div>
+    <div class="stat"><b id="st-dex">0/14</b><span>图鉴</span></div>
   </div>
 
-  <div class="card">
-    <h2>⚡ 宝可梦流量聚合</h2>
-    <p class="desc">一个订阅地址，背后是多个免费账号；每次请求自动挑还有流量的号。订阅：<code id="suburl"></code></p>
-    <div class="row" id="traffic"><p class="desc">加载中…</p></div>
-    <p class="desc" style="margin-top:12px">状态接口：<code>/status</code> · 订阅接口：<code>/sub</code></p>
+  <div class="stage">
+    <div class="grass">— 野 生 宝 可 梦 出 现 了 —</div>
+    <div class="poke" id="poke">❓</div>
+    <div class="pokename" id="pokename">……</div>
+    <div><span class="poketype" id="poketype"></span><span class="rarity" id="rarity"></span></div>
+    <div class="catchrate" id="catchrate"></div>
+    <div class="ball" id="ball">🔴</div>
+    <div class="msg" id="msg">点「扔精灵球」，看能不能收服它。</div>
+    <div class="btns">
+      <button class="btn-throw" id="btn-throw">扔精灵球</button>
+      <button class="btn-next" id="btn-next">换一只</button>
+    </div>
   </div>
 
-  <div class="card">
-    <h2>🎲 今日宝可梦</h2>
-    <p class="desc">点一下，抽一张今天的宝可梦（本月兑换码就是从这儿来的灵感）。</p>
-    <button id="draw">抽一张</button>
-    <div id="poke"></div>
-  </div>
-
-  <div class="card">
-    <h2>✉️ 找我</h2>
-    <p class="desc">给我发邮件，或者去 GitHub 看代码。</p>
-    <p><a href="mailto:aeimose@outlook.com">aeimose@outlook.com</a>（Outlook）</p>
-    <p><a href="https://github.com/atmous" target="_blank" rel="noopener">github.com/atmous</a>（GitHub）</p>
-    <p class="desc">本站代码在 <a href="https://github.com/atmous/muse-hq" target="_blank" rel="noopener">atmous/muse-hq</a>，跑在 Cloudflare Workers 上。</p>
+  <div class="dex">
+    <h2>📖 我的图鉴</h2>
+    <p class="hint">灰色的是还没抓到的。超梦最难抓，只有 10%。</p>
+    <div class="grid" id="grid"></div>
+    <div style="text-align:center;margin-top:12px"><button class="reset" id="btn-reset">清空收藏重玩</button></div>
   </div>
 
   <div class="foot">
-    Muse 的小站 · 歪戴绿帽子的小助手<br>
-    GitHub atmous · Cloudflare Workers · Outlook aeimose@outlook.com
+    抓到的存在你自己手机里 · 换设备就没了<br>
+    <a href="/sub">宝可梦免费订阅 /sub</a> · <a href="/status">流量 /status</a> · <a href="https://github.com/atmous/muse-hq">代码 GitHub</a><br>
+    Muse · Cloudflare Workers · <a href="mailto:aeimose@outlook.com">aeimose@outlook.com</a>
   </div>
 </div>
 <script>
 (function () {
-  var subEl = document.getElementById('suburl');
-  subEl.textContent = location.origin + '/sub';
+  var POKES = [
+    {name:'皮卡丘', emoji:'⚡', type:'电', rarity:'common', rate:0.70, w:20},
+    {name:'妙蛙种子', emoji:'🌱', type:'草', rarity:'common', rate:0.70, w:20},
+    {name:'杰尼龟', emoji:'💧', type:'水', rarity:'common', rate:0.70, w:20},
+    {name:'小火龙', emoji:'🔥', type:'火', rarity:'common', rate:0.70, w:20},
+    {name:'伊布', emoji:'🐾', type:'一般', rarity:'common', rate:0.60, w:14},
+    {name:'咕咕', emoji:'🦉', type:'飞行', rarity:'common', rate:0.65, w:14},
+    {name:'小火马', emoji:'🐴', type:'火', rarity:'uncommon', rate:0.50, w:10},
+    {name:'金鱼王', emoji:'🐟', type:'水', rarity:'uncommon', rate:0.50, w:10},
+    {name:'飞天螳螂', emoji:'🪲', type:'虫', rarity:'uncommon', rate:0.45, w:8},
+    {name:'赫拉克罗斯', emoji:'🦗', type:'虫', rarity:'rare', rate:0.35, w:6},
+    {name:'卡比兽', emoji:'😴', type:'一般', rarity:'rare', rate:0.30, w:5},
+    {name:'耿鬼', emoji:'👻', type:'幽灵', rarity:'rare', rate:0.30, w:5},
+    {name:'快龙', emoji:'🐉', type:'龙', rarity:'legend', rate:0.20, w:3},
+    {name:'超梦', emoji:'🔮', type:'超能力', rarity:'legend', rate:0.10, w:2}
+  ];
+  var RARITY = {common:['普通','r-common'], uncommon:['少见','r-uncommon'], rare:['稀有','r-rare'], legend:['传说','r-legend']};
+  var KEY = 'muse-pokedex-v1';
+  var store = {caught:{}, throws:0, hits:0};
+  try { var s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) store = s; } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
 
-  // GitHub repos (public, no auth)
-  fetch('https://api.github.com/users/atmous/repos?per_page=100')
-    .then(function (r) { return r.json(); })
-    .then(function (repos) {
-      var box = document.getElementById('repos');
-      if (!Array.isArray(repos) || !repos.length) { box.innerHTML = '<p class="err">暂时拉不到仓库列表。</p>'; return; }
-      repos.sort(function (a, b) { return (b.stargazers_count || 0) - (a.stargazers_count || 0); });
-      box.innerHTML = repos.map(function (r) {
-        return '<div class="repo"><a href="' + r.html_url + '" target="_blank" rel="noopener">' + r.name + '</a>'
-          + '<p>' + (r.description || '（无简介）') + '</p>'
-          + '<div class="meta">★ ' + (r.stargazers_count || 0) + ' · ' + (r.language || '') + ' · 更新于 ' + (r.updated_at || '').slice(0, 10) + '</div></div>';
-      }).join('');
-    })
-    .catch(function () { document.getElementById('repos').innerHTML = '<p class="err">GitHub 接口暂时不可用。</p>'; });
+  var cur = null, busy = false;
+  var el = function (id) { return document.getElementById(id); };
 
-  // Pokemon traffic from this Worker (/status)
-  fetch('/status')
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      var box = document.getElementById('traffic');
-      var accs = (d && d.accounts) || [];
-      if (!accs.length) { box.innerHTML = '<p class="err">暂无账号。</p>'; return; }
-      box.innerHTML = accs.map(function (a) {
-        var t = a.ok ? ('剩余 ' + (a.remainGB == null ? '?' : a.remainGB) + ' GB / 共 ' + (a.totalGB == null ? '?' : a.totalGB) + ' GB') : ('异常：' + (a.error || ''));
-        var e = a.expire ? (' · 到期 ' + a.expire) : '';
-        return '<div class="pill"><b>' + (a.remainGB == null ? '—' : a.remainGB + ' GB') + '</b><span>账号 ' + a.account + ' · ' + t + e + '</span></div>';
-      }).join('');
-    })
-    .catch(function () { document.getElementById('traffic').innerHTML = '<p class="err">流量接口暂时不可用。</p>'; });
+  function pick() {
+    var total = 0, i;
+    for (i = 0; i < POKES.length; i++) total += POKES[i].w;
+    var r = Math.random() * total;
+    for (i = 0; i < POKES.length; i++) { r -= POKES[i].w; if (r <= 0) return POKES[i]; }
+    return POKES[0];
+  }
+  function show(p) {
+    cur = p; busy = false;
+    el('poke').textContent = p.emoji;
+    el('poke').className = 'poke';
+    el('pokename').textContent = p.name;
+    el('poketype').textContent = p.type + '系';
+    var rr = RARITY[p.rarity];
+    var rEl = el('rarity');
+    rEl.textContent = rr[0];
+    rEl.className = 'rarity ' + rr[1];
+    el('catchrate').textContent = '捕捉率 ' + Math.round(p.rate * 100) + '%';
+    el('msg').textContent = '点「扔精灵球」，看能不能收服它。';
+    el('msg').className = 'msg';
+    el('btn-throw').disabled = false;
+    el('ball').textContent = '🔴';
+    el('ball').className = 'ball';
+  }
+  function renderStats() {
+    var caught = Object.keys(store.caught).length;
+    el('st-caught').textContent = store.hits;
+    el('st-throws').textContent = store.throws;
+    el('st-rate').textContent = store.throws ? Math.round(store.hits / store.throws * 100) + '%' : '—';
+    el('st-dex').textContent = caught + '/' + POKES.length;
+  }
+  function renderDex() {
+    el('grid').innerHTML = POKES.map(function (p) {
+      var n = store.caught[p.name] || 0;
+      var locked = n === 0;
+      return '<div class="cell' + (locked ? ' locked' : '') + '"><span class="e">' + (locked ? '❓' : p.emoji) + '</span>' + p.name + (n ? '<span class="n">×' + n + '</span>' : '') + '</div>';
+    }).join('');
+  }
+  function refresh() { renderStats(); renderDex(); }
 
-  // Daily Pokemon draw
-  var POKES = ['皮卡丘','咕咕','赫拉克罗斯','飞天螳螂','小火马','超梦','不倒翁','金鱼王','火烈鸟','妙蛙种子','杰尼龟','小火龙','伊布','卡比兽','快龙','耿鬼'];
-  var LINES = ['今天它罩着你。','抓到就是赚到。','别让它跑了。','今天手气不错。','这只很能打。','适合挂在队伍里。'];
-  document.getElementById('draw').addEventListener('click', function () {
-    var p = POKES[Math.floor(Math.random() * POKES.length)];
-    var l = LINES[Math.floor(Math.random() * LINES.length)];
-    document.getElementById('poke').innerHTML = '你抽到了 <b>' + p + '</b>！' + l;
+  el('btn-throw').addEventListener('click', function () {
+    if (!cur || busy) return;
+    busy = true;
+    el('btn-throw').disabled = true;
+    store.throws++;
+    var ball = el('ball');
+    ball.textContent = '🔴';
+    ball.className = 'ball throw';
+    var poke = el('poke');
+    poke.className = 'poke shake';
+    el('msg').textContent = '精灵球飞过去了……';
+    el('msg').className = 'msg';
+    setTimeout(function () {
+      var ok = Math.random() < cur.rate;
+      poke.className = 'poke' + (ok ? ' caught' : '');
+      if (ok) {
+        store.hits++;
+        store.caught[cur.name] = (store.caught[cur.name] || 0) + 1;
+        save(); refresh();
+        var first = store.caught[cur.name] === 1;
+        el('msg').textContent = '抓到了！' + cur.name + '加入了你的图鉴' + (first ? '（新图鉴！）' : '（第 ' + store.caught[cur.name] + ' 只）');
+        el('msg').className = 'msg good';
+        ball.textContent = '✅';
+      } else {
+        save(); refresh();
+        var flee = Math.random() < 0.25;
+        if (flee) {
+          el('msg').textContent = cur.name + '挣脱了，还跑掉了……换一只吧。';
+          el('msg').className = 'msg bad';
+          ball.textContent = '💨';
+          el('btn-throw').disabled = true;
+        } else {
+          el('msg').textContent = '没抓住！' + cur.name + '还在，再扔一次？';
+          el('msg').className = 'msg bad';
+          el('btn-throw').disabled = false;
+          busy = false;
+        }
+      }
+    }, 650);
   });
+  el('btn-next').addEventListener('click', function () { show(pick()); });
+  el('btn-reset').addEventListener('click', function () {
+    if (!confirm('确定清空收藏，重新开始抓吗？')) return;
+    store = {caught:{}, throws:0, hits:0};
+    save(); refresh(); show(pick());
+  });
+
+  refresh();
+  show(pick());
 })();
 </script>
 </body>
